@@ -1,0 +1,50 @@
+---
+title: "Data cleaning and merging"
+format: html
+
+---
+
+## override data cleaning
+
+Read xlsx file to Rdata and show the data structure.
+
+```{r data}
+library(tidyverse)
+library(foreign)
+library(readxl)
+library(here)
+
+filepath <- getwd()
+setwd("C:/Users/Gang Chen/OneDrive - University at Albany - SUNY/r-projects/mass-override")
+
+override <- read_excel(here::here("data", "override.xlsx"))
+head(override)
+
+debt_ex <- read_excel(here::here("data", "debt_exclusion.xlsx"))
+head(debt_ex)
+
+capital_ex <- read_excel(here::here("data", "capital_exclusion.xlsx"))
+head(capital_ex)
+
+stable_ex <- read_excel(here::here("data", "stable_exclusion.xlsx"))
+head(stable_ex)
+
+#ratings_moody <- read_excel(here::here("data", "bondratings_moody.xls"))
+#head(ratings_moody)
+
+#ratings_sp <- read_excel(here::here("data", "bondratings_sp.xls"))
+#head(ratings_sp)
+
+```
+
+You can add options to executable code like this
+
+```{r}
+abtowns <- override |> 
+  filter(Municipality == "Acton" | Municipality == "Boxborough")
+
+abtowns
+
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
