@@ -1,10 +1,9 @@
 ---
 title: "Data cleaning and merging"
 format: html
-
 ---
 
-## override data cleaning
+## Override data loading
 
 Read xlsx file to Rdata and show the data structure.
 
@@ -17,34 +16,81 @@ library(here)
 filepath <- getwd()
 setwd("C:/Users/Gang Chen/OneDrive - University at Albany - SUNY/r-projects/mass-override")
 
-override <- read_excel(here::here("data", "override.xlsx"))
+override <- read_excel(here::here("data", "override.xlsx")) |>
+  mutate(taxoverride = 1)
 head(override)
 
-debt_ex <- read_excel(here::here("data", "debt_exclusion.xlsx"))
+debt_ex <- read_excel(here::here("data", "debt_exclusion.xlsx")) |>
+  mutate(debtexclusion = 1)
 head(debt_ex)
 
-capital_ex <- read_excel(here::here("data", "capital_exclusion.xlsx"))
+capital_ex <- read_excel(here::here("data", "capital_exclusion.xlsx")) |>
+  mutate(capitalexclusion = 1)
 head(capital_ex)
 
-stable_ex <- read_excel(here::here("data", "stable_exclusion.xlsx"))
+stable_ex <- read_excel(here::here("data", "stable_exclusion.xlsx")) |>
+  mutate(stableexclusion = 1)
 head(stable_ex)
 
-#ratings_moody <- read_excel(here::here("data", "bondratings_moody.xls"))
-#head(ratings_moody)
+ratings_moody <- read.csv(here::here("data", "bondratings_moody.csv"))
+head(ratings_moody)
 
-#ratings_sp <- read_excel(here::here("data", "bondratings_sp.xls"))
-#head(ratings_sp)
+ratings_sp <- read.csv(here::here("data", "bondratings_sp.csv"))
+head(ratings_sp)
 
 ```
-
-You can add options to executable code like this
-
+# Merge and clean data
 ```{r}
-abtowns <- override |> 
-  filter(Municipality == "Acton" | Municipality == "Boxborough")
 
-abtowns
+override_all <- override |>
+  bind_rows(capital_ex, debt_ex, stable_ex) 
+
+names(override_all) <- tolower(names(override_all))
+names(override_all) <- gsub(" |/|_", "", names(override_all))
+
+names(override_all) 
+
+override_all_clean <- override_all |> 
+  arrange(municipality, fiscalyear, votetype) |> 
+  mutate(across(c(yesvotes, novotes, amount), ~ gsub(",", "", .))) |> #get rid of the comma
+  mutate(yesvotes = case_when (
+    is.na(yesvotes) ~ as.numeric(numberyes),
+    TRUE ~ as.numeric(yesvotes)),
+    novotes = case_when (
+    is.na(novotes) ~ as.numeric(numberno),
+    TRUE ~ as.numeric(novotes))) |>
+  select(-numberyes, -numberno, -votetype)  |>
+  mutate(per_yes = yesvotes/(yesvotes+novotes))
+
+summary(override_all_clean)
+
+override_sum <-
+  override_all_clean |> 
+  group_by(municipality) |> 
+  summarize(mean_per_yes = mean(per_yes, na.rm = TRUE))
+
+capital_sum <- override_all_clean |> 
+  filter(capitalexclusion == 1) |> 
+  group_by(municipality) |>
+  summarize(count = n(), mean_per_yes = mean(per_yes, na.rm = TRUE))
+
+debt_sum <-
+  override_all_clean |> 
+  filter(debtexclusion == 1) |> 
+  group_by(municipality) |>
+  summarize(count = n(), mean_per_yes = mean(per_yes, na.rm = TRUE))
+
+stable_sum <-
+  override_all_clean |> 
+  filter(stableexclusion == 1) |> 
+  group_by(municipality) |>
+  summarize(count = n(), mean_per_yes = mean(per_yes, na.rm = TRUE))
+
+muni_sum <- override_sum |> 
+  left_join(capital_sum, by = "municipality") |>
+  left_join(debt_sum, by = "municipality") |>
+  left_join(stable_sum, by = "municipality")
+
 
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
