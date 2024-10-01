@@ -1,17 +1,28 @@
 ---
-title: "Data cleaning and merging"
+title: "Summary of Massachusetts Tax Override Data"
+author: Gang Chen
+Email: gchen3@albany.edu
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
 format: html
 ---
 
-## Override data loading
+## Main data sources
+1. DLS Gateway, governance data, https://dlsgateway.dor.state.ma.us/gateway/DLSPublic/Search/Search
+2. Mass databank, https://www.mass.gov/info-details/division-of-local-services-municipal-databank
+3. DLS proposition 2 1/2 override and underride votes, https://dlsgateway.dor.state.ma.us/reports/rdPage.aspx?rdReport=Votes.Prop2_5.OverrideUnderride
+4. Mass municipal data hub, https://www.mma.org/#data-hub
 
-Read xlsx file to Rdata and show the data structure.
+<!-- Input data -->
 
 ```{r data}
+#| echo: false
+#| include: false
+
 library(tidyverse)
 library(foreign)
 library(readxl)
 library(here)
+library(gt)
 
 filepath <- getwd()
 setwd("C:/Users/Gang Chen/OneDrive - University at Albany - SUNY/r-projects/mass-override")
@@ -39,8 +50,12 @@ ratings_sp <- read.csv(here::here("data", "bondratings_sp.csv"))
 head(ratings_sp)
 
 ```
-# Merge and clean data
+
+<!-- Merge and clean data -->
+
 ```{r}
+#| echo: false
+#| include: false
 
 override_all <- override |>
   bind_rows(capital_ex, debt_ex, stable_ex) 
@@ -56,41 +71,108 @@ override_all_clean <- override_all |>
   mutate(yesvotes = case_when (
     is.na(yesvotes) ~ as.numeric(numberyes),
     TRUE ~ as.numeric(yesvotes)),
+    
     novotes = case_when (
     is.na(novotes) ~ as.numeric(numberno),
-    TRUE ~ as.numeric(novotes))) |>
-  select(-numberyes, -numberno, -votetype)  |>
-  mutate(per_yes = yesvotes/(yesvotes+novotes))
-
-summary(override_all_clean)
-
+    TRUE ~ as.numeric(novotes)),
+    
+    votetype = case_when (
+    debtexclusion == 1 ~ "Debt",
+    capitalexclusion == 1 ~ "Capital",
+    stableexclusion == 1 ~ "Stablization",
+    TRUE ~ "Tax Override")
+    ) |>
+  select(-numberyes, -numberno)  |>
+  mutate(per_yes = yesvotes/(yesvotes+novotes)) |>
+  mutate(winloss_code = case_when (
+    winloss == "WIN" ~ 1,
+    TRUE ~ 0))
+  
 override_sum <-
   override_all_clean |> 
-  group_by(municipality) |> 
-  summarize(mean_per_yes = mean(per_yes, na.rm = TRUE))
+  group_by(municipality, votetype) |> 
+  summarize(average_yes_percent = mean(per_yes, na.rm = TRUE), 
+            average_win = mean(winloss_code, na.rm = TRUE),
+            count = n(), .groups = 'drop')
 
-capital_sum <- override_all_clean |> 
-  filter(capitalexclusion == 1) |> 
-  group_by(municipality) |>
-  summarize(count = n(), mean_per_yes = mean(per_yes, na.rm = TRUE))
+override_sum_abtowns <- override_sum |> filter(municipality == "Acton" | municipality == "Boxborough")
 
-debt_sum <-
-  override_all_clean |> 
-  filter(debtexclusion == 1) |> 
-  group_by(municipality) |>
-  summarize(count = n(), mean_per_yes = mean(per_yes, na.rm = TRUE))
+override_sum_type <- override_sum |> 
+  group_by(votetype) |> 
+  summarize(average_yes_percent = mean(average_yes_percent, na.rm = TRUE), 
+            average_win = mean(average_win, na.rm = TRUE),
+            count = n())
 
-stable_sum <-
-  override_all_clean |> 
-  filter(stableexclusion == 1) |> 
-  group_by(municipality) |>
-  summarize(count = n(), mean_per_yes = mean(per_yes, na.rm = TRUE))
+override_sum_year <- override_all_clean |> 
+  group_by(fiscalyear) |> 
+  summarize(average_yes_percent = mean(per_yes, na.rm = TRUE), 
+            average_win = mean(winloss_code, na.rm = TRUE),
+            count = n(), .groups = 'drop')
+```
 
-muni_sum <- override_sum |> 
-  left_join(capital_sum, by = "municipality") |>
-  left_join(debt_sum, by = "municipality") |>
-  left_join(stable_sum, by = "municipality")
+## Summarize data
 
+```{r}
+#| echo: false
+#| include: true
+ 
+override_sum_abtowns |> 
+  gt() |>
+  tab_header(
+    title = md("**Acton and Boxborough Town Overrides 1990-2024**")
+  ) |>
+  tab_source_note(
+    source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
+  ) |>
+  cols_label(
+    municipality = "Town",
+    votetype = md("Type of<br>Override"),
+    average_yes_percent = md("Percent of<br>Yes vote"),
+    average_win = md("Percent of<br>Win"),
+    count = md("Number of<br>Overrides")
+  ) |>
+  fmt_percent(
+    columns = c(average_yes_percent, average_win),
+    decimals = 1
+  )
+
+override_sum_type |> 
+  gt() |>
+  tab_header(
+    title = md("**Overrides by type 1990-2024**")
+  ) |>
+  tab_source_note(
+    source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
+  ) |>
+  cols_label(
+    votetype = md("Type of<br>Override"),
+    average_yes_percent = md("Percent of<br>Yes vote"),
+    average_win = md("Percent of<br>Win"),
+    count = md("Number of<br>Overrides")
+  ) |>
+  fmt_percent(
+    columns = c(average_yes_percent, average_win),
+    decimals = 1
+  )
+
+override_sum_year|> 
+  gt() |>
+  tab_header(
+    title = md("**Overrides by year 1990-2024**")
+  ) |>
+  tab_source_note(
+    source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
+  ) |>
+  cols_label(
+    fiscalyear = "Fiscal Year",
+    average_yes_percent = md("Percent of<br>Yes vote"),
+    average_win = md("Percent of<br>Win"),
+    count = md("Number of<br>Overrides")
+  ) |>
+  fmt_percent(
+    columns = c(average_yes_percent, average_win),
+    decimals = 1
+  )
 
 ```
 

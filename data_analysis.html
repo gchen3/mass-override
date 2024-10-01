@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Gang Chen">
+<meta name="dcterms.date" content="2024-10-01">
 
-<title>Data cleaning and merging</title>
+<title>Summary of Massachusetts Tax Override Data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,40 +21,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -79,14 +47,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data cleaning and merging</h1>
+<h1 class="title">Summary of Massachusetts Tax Override Data</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Gang Chen </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 1, 2024</p>
+    </div>
+  </div>
   
     
   </div>
@@ -96,305 +76,1740 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="override-data-loading" class="level2">
-<h2 class="anchored" data-anchor-id="override-data-loading">Override data loading</h2>
-<p>Read xlsx file to Rdata and show the data structure.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.0     ✔ tibble    3.2.1
-✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-✔ purrr     1.0.2     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>here() starts at C:/Users/Gang Chen/OneDrive - University at Albany - SUNY/r-projects/mass-override</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>filepath <span class="ot">&lt;-</span> <span class="fu">getwd</span>()</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"C:/Users/Gang Chen/OneDrive - University at Albany - SUNY/r-projects/mass-override"</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>override <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"override.xlsx"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">taxoverride =</span> <span class="dv">1</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(override)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 12
-  `DOR Code` Municipality `Fiscal Year` `Vote Date`         `Win / Loss`
-  &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt; &lt;dttm&gt;              &lt;chr&gt;       
-1 001        Abington              1990 1989-07-01 00:00:00 WIN         
-2 001        Abington              1992 1991-08-01 00:00:00 WIN         
-3 001        Abington              1992 1991-08-01 00:00:00 LOSS        
-4 001        Abington              2004 2003-06-07 00:00:00 LOSS        
-5 001        Abington              2009 2008-04-26 00:00:00 WIN         
-6 002        Acton                 1990 1989-04-01 00:00:00 WIN         
-# ℹ 7 more variables: `Yes Votes` &lt;chr&gt;, `No Votes` &lt;chr&gt;, `Vote Type` &lt;chr&gt;,
-#   Department &lt;chr&gt;, Description &lt;chr&gt;, Amount &lt;dbl&gt;, taxoverride &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>debt_ex <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"debt_exclusion.xlsx"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">debtexclusion =</span> <span class="dv">1</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(debt_ex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 10
-  `DOR Code` Municipality `Fiscal Year` `Vote Date`         Description         
-  &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt; &lt;dttm&gt;              &lt;chr&gt;               
-1 001        Abington              1990 1982-09-01 00:00:00 Sewers              
-2 001        Abington              1990 1986-12-01 00:00:00 Golf                
-3 001        Abington              1997 1995-11-04 00:00:00 Extension Of Sewer …
-4 001        Abington              2000 1995-11-04 00:00:00 Constr.And Furnishi…
-5 001        Abington              2000 1988-06-01 00:00:00 Sewers              
-6 001        Abington              2000 1998-05-09 00:00:00 Land Known As Griff…
-# ℹ 5 more variables: Department &lt;chr&gt;, `Win / Loss` &lt;chr&gt;, `Number Yes` &lt;dbl&gt;,
-#   `Number No` &lt;dbl&gt;, debtexclusion &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>capital_ex <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"capital_exclusion.xlsx"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">capitalexclusion =</span> <span class="dv">1</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(capital_ex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 11
-  `DOR Code` Municipality `Fiscal Year` `Vote Date`         `Win / Loss`
-  &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt; &lt;dttm&gt;              &lt;chr&gt;       
-1 001        Abington              2011 2010-04-24 00:00:00 WIN         
-2 001        Abington              2011 2010-04-24 00:00:00 WIN         
-3 001        Abington              2016 2015-04-25 00:00:00 WIN         
-4 003        Acushnet              2012 2011-06-07 00:00:00 LOSS        
-5 004        Adams                 1988 1987-06-29 00:00:00 WIN         
-6 008        Amherst               1995 1994-06-14 00:00:00 WIN         
-# ℹ 6 more variables: `Yes Votes` &lt;chr&gt;, `No Votes` &lt;chr&gt;, Department &lt;chr&gt;,
-#   Description &lt;chr&gt;, Amount &lt;dbl&gt;, capitalexclusion &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>stable_ex <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"stable_exclusion.xlsx"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stableexclusion =</span> <span class="dv">1</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(stable_ex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 11
-  `DOR Code` Municipality `Fiscal Year` `Vote Date`         `Win / Loss`
-  &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt; &lt;dttm&gt;              &lt;chr&gt;       
-1 020        Barnstable            2011 2010-11-02 00:00:00 LOSS        
-2 020        Barnstable            2011 2010-11-02 00:00:00 LOSS        
-3 027        Berkley               2007 2006-05-06 00:00:00 WIN         
-4 027        Berkley               2008 2006-05-06 00:00:00 WIN         
-5 027        Berkley               2009 2006-05-06 00:00:00 WIN         
-6 027        Berkley               2010 2006-05-06 00:00:00 WIN         
-# ℹ 6 more variables: `Yes Votes` &lt;chr&gt;, `No Votes` &lt;chr&gt;, Department &lt;chr&gt;,
-#   Description &lt;chr&gt;, Amount &lt;dbl&gt;, stableexclusion &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ratings_moody <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"bondratings_moody.csv"</span>))</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ratings_moody)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  DOR.CODE     Name Rating.Agency X1986 X1987 X1988 X1989 X1990 X1991 X1992
-1        1 Abington        Moodys     A     A     A     A     A     A     A
-2        2    Acton        Moodys    AA    AA    AA    AA    AA    AA    AA
-3        3 Acushnet        Moodys     A     A     A                        
-4        4    Adams        Moodys     A     A     A     A     A     A     A
-5        5   Agawam        Moodys     A     A     A     A     A     A     A
-6        7 Amesbury        Moodys     A     A     A  BAA1  BAA1  BAA1  BAA1
-  X1993 X1994 X1995 X1996 X1997 X1998 X1999 X2000 X2001 X2002 X2003 X2004 X2005
-1     A     A     A     A     A    A2    A2    A2    A2    A3    A3    A3    A3
-2    Aa    Aa    AA    AA    Aa   Aa2   Aa2   Aa2   Aa2   Aa2   Aa1   Aa1   Aa1
-3                            A3    A3    A3    A3    A3    A3    A3    A2    A2
-4                                                                              
-5     A     A     A     A    A2    A1    A1    A1    A1   Aa3   Aa3   Aa3   Aa3
-6    Ba    Ba    Ba   Baa  Baa2  Baa2    A3    A3    A3    A3    A3    A3    A3
-  X2006 X2007 X2008 X2009 X2010 X2011 X2012 X2013 X2014 X2015 X2017 X2019 X2020
-1    A3    A3    A3    A3    A1    A1    A1    A1    A1    A1                  
-2   Aa1   Aa1   Aa1   Aa1   Aaa   Aaa   Aaa   Aaa   Aaa   Aaa   Aaa   Aaa   Aaa
-3    A2    A2    A2    A2   Aa3   Aa3   Aa3   Aa3   Aa3                        
-4                                                                              
-5   Aa3   Aa3   Aa3   Aa3   Aa2   Aa2   Aa2   Aa2   Aa2   Aa2   Aa2   Aa2   Aa2
-6    A3                A3                                                      
-  X2021 X2023
-1            
-2   Aa1   Aa1
-3            
-4            
-5   Aa2   Aa2
-6            </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ratings_sp <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"bondratings_sp.csv"</span>))</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ratings_sp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  DOR.CODE        Name Rating.Agency     X2001 X2002 X2003 X2004 X2005 X2006
-1        5      Agawam           S&amp;P A+ (SPUR)    A+    A+   AA-   AA-   AA-
-2       10   Arlington           S&amp;P        AA    AA    AA   AAA    AA    AA
-3       16   Attleboro           S&amp;P  A (SPUR)     A     A   AA+     A     A
-4       20  Barnstable           S&amp;P        AA    AA   AA+   AA+   AA+   AA+
-5       23     Bedford           S&amp;P       AA+   AA+   AA+   AA+   AA+   AAA
-6       24 Belchertown           S&amp;P         A     A     A     A     A     A
-  X2007 X2008 X2009 X2010 X2011 X2012 X2014 X2015 X2017 X2019 X2020 X2021 X2023
-1   AA-    AA    AA    AA    AA    AA   AA+   AA+   AA+   AA+   AA+   AA+   AA+
-2    AA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA
-3     A    A+    A+    A+    A+    A+    AA    AA    AA    AA    AA    AA    AA
-4   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA
-5   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA   AAA
-6     A     A    A+    A+    A+    A+    A+    A+    AA    AA    AA    AA    AA</code></pre>
-</div>
-</div>
+<section id="main-data-sources" class="level2">
+<h2 class="anchored" data-anchor-id="main-data-sources">Main data sources</h2>
+<ol type="1">
+<li>DLS Gateway, governance data, https://dlsgateway.dor.state.ma.us/gateway/DLSPublic/Search/Search</li>
+<li>Mass databank, https://www.mass.gov/info-details/division-of-local-services-municipal-databank</li>
+<li>DLS proposition 2 1/2 override and underride votes, https://dlsgateway.dor.state.ma.us/reports/rdPage.aspx?rdReport=Votes.Prop2_5.OverrideUnderride</li>
+<li>Mass municipal data hub, https://www.mma.org/#data-hub</li>
+</ol>
+<!-- Input data -->
+<!-- Merge and clean data -->
 </section>
-<section id="merge-and-clean-data" class="level1">
-<h1>Merge and clean data</h1>
+<section id="summarize-data" class="level2">
+<h2 class="anchored" data-anchor-id="summarize-data">Summarize data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>override_all <span class="ot">&lt;-</span> override <span class="sc">|&gt;</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(capital_ex, debt_ex, stable_ex) </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(override_all) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">names</span>(override_all))</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(override_all) <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">" |/|_"</span>, <span class="st">""</span>, <span class="fu">names</span>(override_all))</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(override_all) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> [1] "dorcode"          "municipality"     "fiscalyear"       "votedate"        
- [5] "winloss"          "yesvotes"         "novotes"          "votetype"        
- [9] "department"       "description"      "amount"           "taxoverride"     
-[13] "capitalexclusion" "numberyes"        "numberno"         "debtexclusion"   
-[17] "stableexclusion" </code></pre>
+<div class="cell-output-display">
+<div>
+<div id="bljwdyibcs" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bljwdyibcs table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#bljwdyibcs thead, #bljwdyibcs tbody, #bljwdyibcs tfoot, #bljwdyibcs tr, #bljwdyibcs td, #bljwdyibcs th {
+  border-style: none;
+}
+
+#bljwdyibcs p {
+  margin: 0;
+  padding: 0;
+}
+
+#bljwdyibcs .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#bljwdyibcs .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#bljwdyibcs .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#bljwdyibcs .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#bljwdyibcs .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#bljwdyibcs .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#bljwdyibcs .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#bljwdyibcs .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#bljwdyibcs .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#bljwdyibcs .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#bljwdyibcs .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bljwdyibcs .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#bljwdyibcs .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#bljwdyibcs .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#bljwdyibcs .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bljwdyibcs .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#bljwdyibcs .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#bljwdyibcs .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#bljwdyibcs .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bljwdyibcs .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#bljwdyibcs .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bljwdyibcs .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#bljwdyibcs .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bljwdyibcs .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bljwdyibcs .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bljwdyibcs .gt_left {
+  text-align: left;
+}
+
+#bljwdyibcs .gt_center {
+  text-align: center;
+}
+
+#bljwdyibcs .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#bljwdyibcs .gt_font_normal {
+  font-weight: normal;
+}
+
+#bljwdyibcs .gt_font_bold {
+  font-weight: bold;
+}
+
+#bljwdyibcs .gt_font_italic {
+  font-style: italic;
+}
+
+#bljwdyibcs .gt_super {
+  font-size: 65%;
+}
+
+#bljwdyibcs .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#bljwdyibcs .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#bljwdyibcs .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#bljwdyibcs .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#bljwdyibcs .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#bljwdyibcs .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#bljwdyibcs .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header gt_heading">
+<th colspan="5" class="gt_heading gt_title gt_font_normal gt_bottom_border"><strong>Acton and Boxborough Town Overrides 1990-2024</strong></th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="Town" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Town</th>
+<th id="Type of<br>Override" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Type of<br>
+Override</th>
+<th id="Percent of<br>Yes vote" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Percent of<br>
+Yes vote</th>
+<th id="Percent of<br>Win" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Percent of<br>
+Win</th>
+<th id="Number of<br>Overrides" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Number of<br>
+Overrides</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="municipality">Acton</td>
+<td class="gt_row gt_left" headers="votetype">Debt</td>
+<td class="gt_row gt_right" headers="average_yes_percent">62.5%</td>
+<td class="gt_row gt_right" headers="average_win">100.0%</td>
+<td class="gt_row gt_right" headers="count">15</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="municipality">Acton</td>
+<td class="gt_row gt_left" headers="votetype">Tax Override</td>
+<td class="gt_row gt_right" headers="average_yes_percent">54.0%</td>
+<td class="gt_row gt_right" headers="average_win">60.0%</td>
+<td class="gt_row gt_right" headers="count">10</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="municipality">Boxborough</td>
+<td class="gt_row gt_left" headers="votetype">Capital</td>
+<td class="gt_row gt_right" headers="average_yes_percent">60.1%</td>
+<td class="gt_row gt_right" headers="average_win">75.0%</td>
+<td class="gt_row gt_right" headers="count">8</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="municipality">Boxborough</td>
+<td class="gt_row gt_left" headers="votetype">Debt</td>
+<td class="gt_row gt_right" headers="average_yes_percent">64.9%</td>
+<td class="gt_row gt_right" headers="average_win">93.3%</td>
+<td class="gt_row gt_right" headers="count">30</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="municipality">Boxborough</td>
+<td class="gt_row gt_left" headers="votetype">Tax Override</td>
+<td class="gt_row gt_right" headers="average_yes_percent">50.1%</td>
+<td class="gt_row gt_right" headers="average_win">55.6%</td>
+<td class="gt_row gt_right" headers="count">9</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="5" class="gt_sourcenote">Source: Department of Local Services proposition 2 1/2 override votes.</td>
+</tr>
+</tfoot>
+
+</table>
+
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>override_all_clean <span class="ot">&lt;-</span> override_all <span class="sc">|&gt;</span> </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(municipality, fiscalyear, votetype) <span class="sc">|&gt;</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(yesvotes, novotes, amount), <span class="sc">~</span> <span class="fu">gsub</span>(<span class="st">","</span>, <span class="st">""</span>, .))) <span class="sc">|&gt;</span> <span class="co">#get rid of the comma</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">yesvotes =</span> <span class="fu">case_when</span> (</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(yesvotes) <span class="sc">~</span> <span class="fu">as.numeric</span>(numberyes),</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(yesvotes)),</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">novotes =</span> <span class="fu">case_when</span> (</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(novotes) <span class="sc">~</span> <span class="fu">as.numeric</span>(numberno),</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(novotes))) <span class="sc">|&gt;</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>numberyes, <span class="sc">-</span>numberno, <span class="sc">-</span>votetype)  <span class="sc">|&gt;</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">per_yes =</span> yesvotes<span class="sc">/</span>(yesvotes<span class="sc">+</span>novotes))</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(override_all_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   dorcode          municipality         fiscalyear  
- Length:11514       Length:11514       Min.   :1988  
- Class :character   Class :character   1st Qu.:1993  
- Mode  :character   Mode  :character   Median :2001  
-                                       Mean   :2003  
-                                       3rd Qu.:2010  
-                                       Max.   :2025  
-                                                     
-    votedate                         winloss             yesvotes      
- Min.   :1982-02-14 00:00:00.000   Length:11514       Min.   :    0.0  
- 1st Qu.:1991-07-15 06:00:00.000   Class :character   1st Qu.:  276.0  
- Median :1999-06-15 00:00:00.000   Mode  :character   Median :  562.0  
- Mean   :2001-04-24 17:45:33.299                      Mean   :  935.4  
- 3rd Qu.:2008-12-09 00:00:00.000                      3rd Qu.: 1061.0  
- Max.   :2024-09-10 00:00:00.000                      Max.   :26752.0  
-                                                                       
-    novotes         department        description           amount         
- Min.   :    0.0   Length:11514       Length:11514       Length:11514      
- 1st Qu.:  210.0   Class :character   Class :character   Class :character  
- Median :  463.0   Mode  :character   Mode  :character   Mode  :character  
- Mean   :  855.1                                                           
- 3rd Qu.:  955.0                                                           
- Max.   :99910.0                                                           
-                                                                           
-  taxoverride   capitalexclusion debtexclusion  stableexclusion
- Min.   :1      Min.   :1        Min.   :1      Min.   :1      
- 1st Qu.:1      1st Qu.:1        1st Qu.:1      1st Qu.:1      
- Median :1      Median :1        Median :1      Median :1      
- Mean   :1      Mean   :1        Mean   :1      Mean   :1      
- 3rd Qu.:1      3rd Qu.:1        3rd Qu.:1      3rd Qu.:1      
- Max.   :1      Max.   :1        Max.   :1      Max.   :1      
- NA's   :6950   NA's   :9912     NA's   :6375   NA's   :11305  
-    per_yes        
- Min.   :0.005544  
- 1st Qu.:0.452098  
- Median :0.554939  
- Mean   :0.549676  
- 3rd Qu.:0.654268  
- Max.   :1.000000  
- NA's   :3         </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>override_all_clean <span class="sc">|&gt;</span> <span class="fu">group_by</span>(municipality) <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">mean_per_yes =</span> <span class="fu">mean</span>(per_yes, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 330 × 2
-   municipality mean_per_yes
-   &lt;chr&gt;               &lt;dbl&gt;
- 1 Abington            0.611
- 2 Acton               0.591
- 3 Acushnet            0.466
- 4 Adams               0.511
- 5 Agawam              0.713
- 6 Alford              0.746
- 7 Amesbury            0.487
- 8 Amherst             0.547
- 9 Andover             0.559
-10 Aquinnah            0.534
-# ℹ 320 more rows</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>override_all_clean <span class="sc">|&gt;</span> <span class="fu">filter</span>(capitalexclusion <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(municipality) <span class="sc">|&gt;</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>(), <span class="at">mean_per_yes =</span> <span class="fu">mean</span>(per_yes, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 162 × 3
-   municipality count mean_per_yes
-   &lt;chr&gt;        &lt;int&gt;        &lt;dbl&gt;
- 1 Abington         3        0.540
- 2 Acushnet         1        0.472
- 3 Adams            1        0.520
- 4 Amherst          1        0.500
- 5 Aquinnah         4        0.383
- 6 Arlington        1        0.320
- 7 Ashburnham      66        0.451
- 8 Ashby           54        0.397
- 9 Ashland          2        0.465
-10 Auburn           1        0.574
-# ℹ 152 more rows</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>override_all_clean <span class="sc">|&gt;</span> <span class="fu">filter</span>(debtexclusion <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(municipality) <span class="sc">|&gt;</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>(), <span class="at">mean_per_yes =</span> <span class="fu">mean</span>(per_yes, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 315 × 3
-   municipality count mean_per_yes
-   &lt;chr&gt;        &lt;int&gt;        &lt;dbl&gt;
- 1 Abington        25        0.636
- 2 Acton           15        0.625
- 3 Acushnet         5        0.465
- 4 Adams            2        0.638
- 5 Agawam           1        0.713
- 6 Alford          10        0.755
- 7 Amesbury         6        0.576
- 8 Amherst          3        0.664
- 9 Andover          9        0.603
-10 Aquinnah        27        0.666
-# ℹ 305 more rows</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>override_all_clean <span class="sc">|&gt;</span> <span class="fu">filter</span>(stableexclusion <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(municipality) <span class="sc">|&gt;</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>(), <span class="at">mean_per_yes =</span> <span class="fu">mean</span>(per_yes, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 20 × 3
-   municipality count mean_per_yes
-   &lt;chr&gt;        &lt;int&gt;        &lt;dbl&gt;
- 1 Aquinnah         8        0.503
- 2 Barnstable       2        0.228
- 3 Berkley         38        0.608
- 4 Cohasset         2        0.603
- 5 Grafton         14        0.569
- 6 Hubbardston      1        0.287
- 7 Medfield         7        0.637
- 8 Oakham           2        0.664
- 9 Orleans         26        0.581
-10 Paxton           8        0.521
-11 Pelham          16        0.595
-12 Rowe            16        0.527
-13 Royalston        3        0.419
-14 Sunderland      12        0.582
-15 Sutton          17        0.511
-16 Tisbury         30        0.514
-17 Westford         2        0.379
-18 Westport         2        0.362
-19 Whately          2        0.393
-20 Winchester       1        0.458</code></pre>
 </div>
 </div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+<div class="cell-output-display">
+<div>
+<div id="bjmukotkyv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bjmukotkyv table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#bjmukotkyv thead, #bjmukotkyv tbody, #bjmukotkyv tfoot, #bjmukotkyv tr, #bjmukotkyv td, #bjmukotkyv th {
+  border-style: none;
+}
+
+#bjmukotkyv p {
+  margin: 0;
+  padding: 0;
+}
+
+#bjmukotkyv .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#bjmukotkyv .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#bjmukotkyv .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#bjmukotkyv .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#bjmukotkyv .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#bjmukotkyv .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#bjmukotkyv .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#bjmukotkyv .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#bjmukotkyv .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#bjmukotkyv .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#bjmukotkyv .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bjmukotkyv .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#bjmukotkyv .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#bjmukotkyv .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#bjmukotkyv .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bjmukotkyv .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#bjmukotkyv .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#bjmukotkyv .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#bjmukotkyv .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bjmukotkyv .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#bjmukotkyv .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bjmukotkyv .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#bjmukotkyv .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bjmukotkyv .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bjmukotkyv .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bjmukotkyv .gt_left {
+  text-align: left;
+}
+
+#bjmukotkyv .gt_center {
+  text-align: center;
+}
+
+#bjmukotkyv .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#bjmukotkyv .gt_font_normal {
+  font-weight: normal;
+}
+
+#bjmukotkyv .gt_font_bold {
+  font-weight: bold;
+}
+
+#bjmukotkyv .gt_font_italic {
+  font-style: italic;
+}
+
+#bjmukotkyv .gt_super {
+  font-size: 65%;
+}
+
+#bjmukotkyv .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#bjmukotkyv .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#bjmukotkyv .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#bjmukotkyv .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#bjmukotkyv .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#bjmukotkyv .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#bjmukotkyv .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header gt_heading">
+<th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border"><strong>Overrides by type 1990-2024</strong></th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="Type of<br>Override" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Type of<br>
+Override</th>
+<th id="Percent of<br>Yes vote" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Percent of<br>
+Yes vote</th>
+<th id="Percent of<br>Win" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Percent of<br>
+Win</th>
+<th id="Number of<br>Overrides" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Number of<br>
+Overrides</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="votetype">Capital</td>
+<td class="gt_row gt_right" headers="average_yes_percent">50.5%</td>
+<td class="gt_row gt_right" headers="average_win">55.9%</td>
+<td class="gt_row gt_right" headers="count">162</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="votetype">Debt</td>
+<td class="gt_row gt_right" headers="average_yes_percent">62.6%</td>
+<td class="gt_row gt_right" headers="average_win">89.6%</td>
+<td class="gt_row gt_right" headers="count">315</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="votetype">Stablization</td>
+<td class="gt_row gt_right" headers="average_yes_percent">49.7%</td>
+<td class="gt_row gt_right" headers="average_win">64.5%</td>
+<td class="gt_row gt_right" headers="count">20</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="votetype">Tax Override</td>
+<td class="gt_row gt_right" headers="average_yes_percent">45.7%</td>
+<td class="gt_row gt_right" headers="average_win">42.0%</td>
+<td class="gt_row gt_right" headers="count">302</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="even">
+<td colspan="4" class="gt_sourcenote">Source: Department of Local Services proposition 2 1/2 override votes.</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<div id="pkhtuuahsn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#pkhtuuahsn table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#pkhtuuahsn thead, #pkhtuuahsn tbody, #pkhtuuahsn tfoot, #pkhtuuahsn tr, #pkhtuuahsn td, #pkhtuuahsn th {
+  border-style: none;
+}
+
+#pkhtuuahsn p {
+  margin: 0;
+  padding: 0;
+}
+
+#pkhtuuahsn .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#pkhtuuahsn .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#pkhtuuahsn .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#pkhtuuahsn .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#pkhtuuahsn .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#pkhtuuahsn .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#pkhtuuahsn .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#pkhtuuahsn .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#pkhtuuahsn .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#pkhtuuahsn .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#pkhtuuahsn .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#pkhtuuahsn .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#pkhtuuahsn .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#pkhtuuahsn .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#pkhtuuahsn .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pkhtuuahsn .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#pkhtuuahsn .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#pkhtuuahsn .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#pkhtuuahsn .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pkhtuuahsn .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#pkhtuuahsn .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pkhtuuahsn .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#pkhtuuahsn .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pkhtuuahsn .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pkhtuuahsn .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pkhtuuahsn .gt_left {
+  text-align: left;
+}
+
+#pkhtuuahsn .gt_center {
+  text-align: center;
+}
+
+#pkhtuuahsn .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#pkhtuuahsn .gt_font_normal {
+  font-weight: normal;
+}
+
+#pkhtuuahsn .gt_font_bold {
+  font-weight: bold;
+}
+
+#pkhtuuahsn .gt_font_italic {
+  font-style: italic;
+}
+
+#pkhtuuahsn .gt_super {
+  font-size: 65%;
+}
+
+#pkhtuuahsn .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#pkhtuuahsn .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#pkhtuuahsn .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#pkhtuuahsn .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#pkhtuuahsn .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#pkhtuuahsn .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#pkhtuuahsn .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header gt_heading">
+<th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border"><strong>Overrides by year 1990-2024</strong></th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="Fiscal Year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Fiscal Year</th>
+<th id="Percent of<br>Yes vote" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Percent of<br>
+Yes vote</th>
+<th id="Percent of<br>Win" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Percent of<br>
+Win</th>
+<th id="Number of<br>Overrides" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Number of<br>
+Overrides</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">1988</td>
+<td class="gt_row gt_right" headers="average_yes_percent">62.5%</td>
+<td class="gt_row gt_right" headers="average_win">86.4%</td>
+<td class="gt_row gt_right" headers="count">66</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">1989</td>
+<td class="gt_row gt_right" headers="average_yes_percent">56.0%</td>
+<td class="gt_row gt_right" headers="average_win">65.2%</td>
+<td class="gt_row gt_right" headers="count">92</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">1990</td>
+<td class="gt_row gt_right" headers="average_yes_percent">53.0%</td>
+<td class="gt_row gt_right" headers="average_win">61.4%</td>
+<td class="gt_row gt_right" headers="count">856</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">1991</td>
+<td class="gt_row gt_right" headers="average_yes_percent">45.2%</td>
+<td class="gt_row gt_right" headers="average_win">37.0%</td>
+<td class="gt_row gt_right" headers="count">827</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">1992</td>
+<td class="gt_row gt_right" headers="average_yes_percent">43.0%</td>
+<td class="gt_row gt_right" headers="average_win">32.4%</td>
+<td class="gt_row gt_right" headers="count">717</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">1993</td>
+<td class="gt_row gt_right" headers="average_yes_percent">49.1%</td>
+<td class="gt_row gt_right" headers="average_win">48.0%</td>
+<td class="gt_row gt_right" headers="count">419</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">1994</td>
+<td class="gt_row gt_right" headers="average_yes_percent">46.6%</td>
+<td class="gt_row gt_right" headers="average_win">45.1%</td>
+<td class="gt_row gt_right" headers="count">412</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">1995</td>
+<td class="gt_row gt_right" headers="average_yes_percent">49.4%</td>
+<td class="gt_row gt_right" headers="average_win">50.9%</td>
+<td class="gt_row gt_right" headers="count">322</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">1996</td>
+<td class="gt_row gt_right" headers="average_yes_percent">46.9%</td>
+<td class="gt_row gt_right" headers="average_win">47.0%</td>
+<td class="gt_row gt_right" headers="count">287</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">1997</td>
+<td class="gt_row gt_right" headers="average_yes_percent">52.9%</td>
+<td class="gt_row gt_right" headers="average_win">60.7%</td>
+<td class="gt_row gt_right" headers="count">214</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">1998</td>
+<td class="gt_row gt_right" headers="average_yes_percent">55.3%</td>
+<td class="gt_row gt_right" headers="average_win">68.9%</td>
+<td class="gt_row gt_right" headers="count">206</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">1999</td>
+<td class="gt_row gt_right" headers="average_yes_percent">59.5%</td>
+<td class="gt_row gt_right" headers="average_win">84.6%</td>
+<td class="gt_row gt_right" headers="count">143</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2000</td>
+<td class="gt_row gt_right" headers="average_yes_percent">62.9%</td>
+<td class="gt_row gt_right" headers="average_win">96.5%</td>
+<td class="gt_row gt_right" headers="count">964</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2001</td>
+<td class="gt_row gt_right" headers="average_yes_percent">60.6%</td>
+<td class="gt_row gt_right" headers="average_win">85.7%</td>
+<td class="gt_row gt_right" headers="count">279</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2002</td>
+<td class="gt_row gt_right" headers="average_yes_percent">61.2%</td>
+<td class="gt_row gt_right" headers="average_win">87.9%</td>
+<td class="gt_row gt_right" headers="count">281</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2003</td>
+<td class="gt_row gt_right" headers="average_yes_percent">57.5%</td>
+<td class="gt_row gt_right" headers="average_win">76.1%</td>
+<td class="gt_row gt_right" headers="count">326</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2004</td>
+<td class="gt_row gt_right" headers="average_yes_percent">53.9%</td>
+<td class="gt_row gt_right" headers="average_win">63.8%</td>
+<td class="gt_row gt_right" headers="count">343</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2005</td>
+<td class="gt_row gt_right" headers="average_yes_percent">55.0%</td>
+<td class="gt_row gt_right" headers="average_win">68.8%</td>
+<td class="gt_row gt_right" headers="count">365</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2006</td>
+<td class="gt_row gt_right" headers="average_yes_percent">54.6%</td>
+<td class="gt_row gt_right" headers="average_win">69.0%</td>
+<td class="gt_row gt_right" headers="count">384</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2007</td>
+<td class="gt_row gt_right" headers="average_yes_percent">51.2%</td>
+<td class="gt_row gt_right" headers="average_win">51.3%</td>
+<td class="gt_row gt_right" headers="count">386</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2008</td>
+<td class="gt_row gt_right" headers="average_yes_percent">54.1%</td>
+<td class="gt_row gt_right" headers="average_win">64.9%</td>
+<td class="gt_row gt_right" headers="count">308</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2009</td>
+<td class="gt_row gt_right" headers="average_yes_percent">52.9%</td>
+<td class="gt_row gt_right" headers="average_win">59.4%</td>
+<td class="gt_row gt_right" headers="count">308</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2010</td>
+<td class="gt_row gt_right" headers="average_yes_percent">58.4%</td>
+<td class="gt_row gt_right" headers="average_win">75.8%</td>
+<td class="gt_row gt_right" headers="count">211</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2011</td>
+<td class="gt_row gt_right" headers="average_yes_percent">56.7%</td>
+<td class="gt_row gt_right" headers="average_win">71.6%</td>
+<td class="gt_row gt_right" headers="count">190</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2012</td>
+<td class="gt_row gt_right" headers="average_yes_percent">57.1%</td>
+<td class="gt_row gt_right" headers="average_win">69.9%</td>
+<td class="gt_row gt_right" headers="count">229</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2013</td>
+<td class="gt_row gt_right" headers="average_yes_percent">58.5%</td>
+<td class="gt_row gt_right" headers="average_win">73.3%</td>
+<td class="gt_row gt_right" headers="count">217</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2014</td>
+<td class="gt_row gt_right" headers="average_yes_percent">58.8%</td>
+<td class="gt_row gt_right" headers="average_win">81.8%</td>
+<td class="gt_row gt_right" headers="count">181</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2015</td>
+<td class="gt_row gt_right" headers="average_yes_percent">60.2%</td>
+<td class="gt_row gt_right" headers="average_win">79.3%</td>
+<td class="gt_row gt_right" headers="count">174</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2016</td>
+<td class="gt_row gt_right" headers="average_yes_percent">59.7%</td>
+<td class="gt_row gt_right" headers="average_win">78.3%</td>
+<td class="gt_row gt_right" headers="count">212</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2017</td>
+<td class="gt_row gt_right" headers="average_yes_percent">61.3%</td>
+<td class="gt_row gt_right" headers="average_win">80.0%</td>
+<td class="gt_row gt_right" headers="count">175</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2018</td>
+<td class="gt_row gt_right" headers="average_yes_percent">65.1%</td>
+<td class="gt_row gt_right" headers="average_win">87.6%</td>
+<td class="gt_row gt_right" headers="count">193</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2019</td>
+<td class="gt_row gt_right" headers="average_yes_percent">62.9%</td>
+<td class="gt_row gt_right" headers="average_win">88.3%</td>
+<td class="gt_row gt_right" headers="count">206</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2020</td>
+<td class="gt_row gt_right" headers="average_yes_percent">63.8%</td>
+<td class="gt_row gt_right" headers="average_win">89.0%</td>
+<td class="gt_row gt_right" headers="count">219</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2021</td>
+<td class="gt_row gt_right" headers="average_yes_percent">62.2%</td>
+<td class="gt_row gt_right" headers="average_win">83.6%</td>
+<td class="gt_row gt_right" headers="count">134</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2022</td>
+<td class="gt_row gt_right" headers="average_yes_percent">67.9%</td>
+<td class="gt_row gt_right" headers="average_win">95.1%</td>
+<td class="gt_row gt_right" headers="count">163</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2023</td>
+<td class="gt_row gt_right" headers="average_yes_percent">66.5%</td>
+<td class="gt_row gt_right" headers="average_win">95.1%</td>
+<td class="gt_row gt_right" headers="count">142</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="fiscalyear">2024</td>
+<td class="gt_row gt_right" headers="average_yes_percent">62.0%</td>
+<td class="gt_row gt_right" headers="average_win">84.1%</td>
+<td class="gt_row gt_right" headers="count">220</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="fiscalyear">2025</td>
+<td class="gt_row gt_right" headers="average_yes_percent">59.8%</td>
+<td class="gt_row gt_right" headers="average_win">75.5%</td>
+<td class="gt_row gt_right" headers="count">143</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="even">
+<td colspan="4" class="gt_sourcenote">Source: Department of Local Services proposition 2 1/2 override votes.</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</div>
 </section>
 
 </main>
