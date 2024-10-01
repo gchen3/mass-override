@@ -4,6 +4,7 @@ author: Gang Chen
 Email: gchen3@albany.edu
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 format: html
+
 ---
 
 ## Main data sources
@@ -87,6 +88,8 @@ override_all_clean <- override_all |>
   mutate(winloss_code = case_when (
     winloss == "WIN" ~ 1,
     TRUE ~ 0))
+
+saveRDS(override_all_clean, here::here("data", "override_all_clean.RData"))
   
 override_sum <-
   override_all_clean |> 
@@ -108,6 +111,10 @@ override_sum_year <- override_all_clean |>
   summarize(average_yes_percent = mean(per_yes, na.rm = TRUE), 
             average_win = mean(winloss_code, na.rm = TRUE),
             count = n(), .groups = 'drop')
+
+override_acton <- override_all_clean |> 
+  filter(municipality == "Acton", fiscalyear>2000)  |>
+  select(municipality, fiscalyear, winloss, per_yes, votetype, department, description)
 ```
 
 ## Summarize data
@@ -116,26 +123,6 @@ override_sum_year <- override_all_clean |>
 #| echo: false
 #| include: true
  
-override_sum_abtowns |> 
-  gt() |>
-  tab_header(
-    title = md("**Acton and Boxborough Town Overrides 1990-2024**")
-  ) |>
-  tab_source_note(
-    source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
-  ) |>
-  cols_label(
-    municipality = "Town",
-    votetype = md("Type of<br>Override"),
-    average_yes_percent = md("Percent of<br>Yes vote"),
-    average_win = md("Percent of<br>Win"),
-    count = md("Number of<br>Overrides")
-  ) |>
-  fmt_percent(
-    columns = c(average_yes_percent, average_win),
-    decimals = 1
-  )
-
 override_sum_type |> 
   gt() |>
   tab_header(
@@ -173,6 +160,49 @@ override_sum_year|>
     columns = c(average_yes_percent, average_win),
     decimals = 1
   )
+
+override_sum_abtowns |> 
+  gt() |>
+  tab_header(
+    title = md("**Acton and Boxborough Town Overrides 1990-2024**")
+  ) |>
+  tab_source_note(
+    source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
+  ) |>
+  cols_label(
+    municipality = "Town",
+    votetype = md("Type of<br>Override"),
+    average_yes_percent = md("Percent of<br>Yes vote"),
+    average_win = md("Percent of<br>Win"),
+    count = md("Number of<br>Overrides")
+  ) |>
+  fmt_percent(
+    columns = c(average_yes_percent, average_win),
+    decimals = 1
+  )
+
+override_acton |> 
+  gt() |>
+  tab_header(
+    title = md("**Acton Town Overrides 2000-2024**")
+  ) |>
+  tab_source_note(
+    source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
+  ) |>
+  cols_label(
+    municipality = "Town", 
+    fiscalyear = "Year", 
+    winloss = "Result", 
+    per_yes = "% Yes", 
+    votetype = "Type", 
+    department = "Department", 
+    description = "Description"
+  ) |>
+  fmt_percent(
+    columns = c(per_yes),
+    decimals = 1
+  )
+
 
 ```
 
