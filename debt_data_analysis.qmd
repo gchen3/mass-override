@@ -3,9 +3,7 @@ title: "Summary of Massachusetts Tax Override Data"
 author: Gang Chen
 Email: gchen3@albany.edu
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
-format: 
-  html:
-    toc: true
+format: html
 ---
 
 ## Main data sources
@@ -86,9 +84,156 @@ muni_name_code <- muni_name_code |>
                 tolower())
 
 debt_all_clean <- debt_all_clean |>
-  left_join(muni_name_code, by = c("dor_code" = "dor_code")) |>
-  select(-municipality.y) |>
-  rename(municipality = municipality.x) |>
-  select(municipality, everything())
+  left_join(muni_name_code, by = c("dor_code" = "dor_code"))
+
+saveRDS(debt_all_clean, here::here("data", "debt_all_clean.RData"))
+
+```
+
+## Summarize debt data and show tables
+1. Write a function that shows the average number per year 
+2. Write a function that shows the number for Acton per year
+
+```{r}
+#| echo: false
+#| include: false
+
+debt_all_clean <- readRDS(here::here("data", "debt_all_clean.RData"))
+
+names(debt_all_clean)
+
+get_debt_table <- function(var = debt_service_as_percent_of_budget) {
+
+yearly_data <- debt_all_clean |>
+    group_by(fy) |>
+    summarize(average = mean({{var}}, na.rm = TRUE),
+              count = n(), .groups = 'drop') 
+
+return(yearly_data)
+
+}
+  
+get_debt_table(debt_service_as_percent_of_budget)
+
+get_acton_table <- function(var = debt_service_as_percent_of_budget) {
+
+acton_data <- debt_all_clean |>
+    filter(municipality == "Acton") |>
+    select(municipality, fy, {{var}})
+  
+return(acton_data)
+}
+
+get_acton_table(debt_service_as_percent_of_budget)
+
+```
+## Produce Tables and figures
+```{r}
+#| echo: false
+#| include: false
+
+debt_service_year <- get_debt_table(debt_service_as_percent_of_budget)
+debt_service_acton <- get_acton_table(debt_service_as_percent_of_budget)
+debt_service_compare <- debt_service_year |> 
+  left_join(debt_service_acton, by = "fy") |>
+  select(-count, -municipality) |>
+  rename(Acton = debt_service_as_percent_of_budget)
+
+debt_outstanding_year <- get_debt_table(debt_as_percent_of_eqv)
+debt_outstanding_acton <- get_acton_table(debt_as_percent_of_eqv)
+debt_outstanding_compare <- debt_outstanding_year |> 
+  left_join(debt_outstanding_acton, by = "fy") |>
+  select(-municipality) |>
+  rename(Acton = debt_as_percent_of_eqv)
+  
+debt_outstanding_compare
+
+
+```
+### Table 1 Debt Service as a Percent of Budget, Acton vs MA average, by year
+```{r}
+#| echo: false
+
+debt_service_compare |> 
+  gt() |>
+  tab_header(
+    title = md("**Debt Service as Percent of Budget, Acton vs MA Average, 1991-2022**")
+  ) |>
+  tab_source_note(
+    source_note = "Source: Department of Local Services Databank."
+  ) |>
+  cols_label(
+    fy = md("Year"),
+    Acton = md("Acton (% of budget)"),
+    average = md("MA Average (% of budget)")) |>
+  fmt_number(
+    columns = c(Acton, average),
+    decimals = 2
+  )
+```
+### Table 2 Debt Outstanding divided by Equalized Valuations, Acton vs MA average, by year
+```{r}
+#| echo: false
+
+debt_outstanding_compare |> 
+  select(-count) |>
+  gt() |>
+  tab_header(
+    title = md("**Debt Outstanding divided by Equalized Valuations, Acton vs MA Average, 1991-2022**")
+  ) |>
+  tab_source_note(
+    source_note = "Source: Department of Local Services Databank."
+  ) |>
+  cols_label(
+    fy = md("Year"),
+    Acton = md("Acton (debt/evaluation)"),
+    average = md("MA Average (debt/evaluation)")) |>
+  fmt_number(
+    columns = c(Acton, average),
+    decimals = 2
+  )
+```
+### Figure 1 Debt Service as a Percent of Budget, Acton vs MA average, by year
+```{r}
+#| echo: false
+
+debt_service_long <- debt_service_compare |>
+  rename(MA_average = average) |>
+  pivot_longer(cols = c(Acton, MA_average), 
+               names_to = "Location", 
+               values_to = "Debt_Service_Percent")
+
+ggplot(debt_service_long, aes(x = fy, y = Debt_Service_Percent, color = Location, linetype = Location)) +
+  geom_line(linewidth = 1.2) +
+  labs(title = "Debt Service as Percent of Budget, Acton vs MA Average, 1991-2022",
+       x = "Year",
+       y = "Debt Service as Percent of Budget (%)") +
+  theme_minimal() +
+  scale_color_manual(values = c("Acton" = "black", "MA_average" = "black")) +
+  scale_linetype_manual(values = c("Acton" = "solid", "MA_average" = "dashed")) +
+  theme(legend.position = "bottom",         
+        legend.title = element_blank())
+
+```
+### Figure 2 Debt Outstanding divided by Equalized Valuations, Acton vs MA average, by year
+```{r}
+#| echo: false
+
+debt_outstanding_long <- debt_outstanding_compare |>
+  rename(MA_average = average) |>
+  pivot_longer(cols = c(Acton, MA_average), 
+               names_to = "Location", 
+               values_to = "Debt_outstanding")
+
+ggplot(debt_outstanding_long, aes(x = fy, y = Debt_outstanding, color = Location, linetype = Location)) +
+  geom_line(linewidth = 1.2) +
+  labs(title = "Debt Outstanding divided by Equalized Valuations, Acton vs MA average, 1991-2022",
+       x = "Year",
+       y = "debt/evaluation") +
+  theme_minimal() +
+  scale_color_manual(values = c("Acton" = "black", "MA_average" = "black")) +
+  scale_linetype_manual(values = c("Acton" = "solid", "MA_average" = "dashed")) +
+  theme(legend.position = "bottom",         
+        legend.title = element_blank())
 
 ```
