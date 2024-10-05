@@ -1,0 +1,94 @@
+---
+title: "Summary of Massachusetts Tax Override Data"
+author: Gang Chen
+Email: gchen3@albany.edu
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+format: 
+  html:
+    toc: true
+---
+
+## Main data sources
+Mass DLS databank
+https://www.mass.gov/collections/DLS-databank-reports?topicid=91816
+
+## Loading and cleaning data
+1. Read xls data to R
+2. Identify the variables and observations
+3. Merge all years data
+4. Match municipal code with municipal name
+
+```{r data}
+#| echo: false
+#| include: false
+
+library(tidyverse)
+library(foreign)
+library(readxl)
+library(here)
+library(gt)
+
+filepath <- getwd()
+setwd("C:/Users/Gang Chen/OneDrive - University at Albany - SUNY/r-projects/mass-override")
+
+
+
+
+read_municipal_debt <- function(file_name) {
+  
+debt <- read_excel(
+  path = here::here("data", file_name),
+  sheet = "Debt",
+  range = cell_limits(c(7, 2), c(NA, NA)),
+  col_names = FALSE)
+
+column_names <- debt[1,]
+
+debt <- read_excel(
+  path = here::here("data", file_name),
+  sheet = "Debt",
+  range = cell_limits(c(9, 2), c(NA, NA)),
+  col_names = FALSE)
+
+colnames(debt) <- as.character(column_names)
+
+if ("DOR Code" %in% colnames(debt)) {
+    debt$`DOR Code` <- as.numeric(debt$`DOR Code`)
+  }
+
+return(debt)
+}
+
+debt_data_2022 <- read_municipal_debt("municipaldebt2022.xlsx")
+debt_data_1019 <- read_municipal_debt("municipaldebt1019.xls")
+debt_data_0009 <- read_municipal_debt("municipaldebt0009.xls")
+debt_data_9199 <- read_municipal_debt("municipaldebt9199.xls")
+
+debt_all_years <- bind_rows(debt_data_9199, debt_data_0009, debt_data_1019, debt_data_2022)
+
+debt_all_clean <- debt_all_years |>
+  filter(!is.na(`DOR Code`)) |>
+  rename_with(~ str_replace_all(.x, " ", "_") |>
+                str_replace_all("%", "percent") |>  
+                tolower())  
+
+muni_name_code <- read_excel(
+  path = here::here("data", "municipaldebt2022.xlsx"),
+  sheet = "Debt",
+  range = cell_limits(c(7, 1), c(NA, 2)),
+  col_names = TRUE) 
+
+muni_name_code$`DOR Code` <- as.numeric(muni_name_code$`DOR Code`)
+
+muni_name_code <- muni_name_code |>
+  filter(!is.na(Municipality)) |>
+  rename_with(~ str_replace_all(.x, " ", "_") |>
+                tolower())
+
+debt_all_clean <- debt_all_clean |>
+  left_join(muni_name_code, by = c("dor_code" = "dor_code")) |>
+  select(-municipality.y) |>
+  rename(municipality = municipality.x) |>
+  select(municipality, everything())
+
+```

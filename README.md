@@ -31,4 +31,14 @@ download sept 29, 2024
 https://dlsgateway.dor.state.ma.us/reports/rdPage.aspx?rdReport=DLS_bond_ratings
 saved "data/bondratings_moody.xls" "data/bondratings_-_sp.xls"
 
+### debt data
+downloaded Oct 5, 2024
+1991-2022
+https://www.mass.gov/collections/DLS-databank-reports?topicid=91816
+saved "data/municipaldebt9199.xls"
+saved "data/municipaldebt0009.xls"
+saved "data/municipaldebt1019.xls"
+saved "data/municipaldebt2022.xls"
+
+
 # Data combine
