@@ -1,0 +1,4 @@
+- source: data_analysis.qmd
+  quarto-pub:
+    - id: d64dcccb-9c0d-4f29-94a3-481c64b4b75e
+      url: 'https://gchen3.quarto.pub/summary-of-massachusetts-tax-override-data'
