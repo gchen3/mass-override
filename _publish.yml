@@ -6,3 +6,11 @@
   quarto-pub:
     - id: 510cef55-b0d6-4a79-a2fb-52a8460b66bb
       url: 'https://gchen3.quarto.pub/summary-of-massachusetts-tax-override-data-42cf'
+
+website:
+  navbar:
+    background: primary
+    search: true
+    left:
+      - override_data_analysis.qmd
+      - debt_data_analysis.qmd 

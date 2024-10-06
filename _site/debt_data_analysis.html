@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Gang Chen">
-<meta name="dcterms.date" content="2024-10-05">
+<meta name="dcterms.date" content="2024-10-06">
 
-<title>Summary of Massachusetts Tax Override Data</title>
+<title>Summary of Massachusetts Tax Override Data – Massachusetts Tax Overrides and Govt Finances</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,24 +25,112 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="debt_data_analysis_files/libs/clipboard/clipboard.min.js"></script>
-<script src="debt_data_analysis_files/libs/quarto-html/quarto.js"></script>
-<script src="debt_data_analysis_files/libs/quarto-html/popper.min.js"></script>
-<script src="debt_data_analysis_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="debt_data_analysis_files/libs/quarto-html/anchor.min.js"></script>
-<link href="debt_data_analysis_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="debt_data_analysis_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="debt_data_analysis_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="debt_data_analysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="debt_data_analysis_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="fullcontent">
+<body class="floating nav-fixed">
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Massachusetts Tax Overrides and Govt Finances</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./override_data_analysis.html"> 
+<span class="menu-text">Override Data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./Debt_data_analysis.qmd"> 
+<span class="menu-text">Debt Data</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#main-data-sources" id="toc-main-data-sources" class="nav-link active" data-scroll-target="#main-data-sources">Main data sources</a></li>
+  <li><a href="#loading-and-cleaning-data" id="toc-loading-and-cleaning-data" class="nav-link" data-scroll-target="#loading-and-cleaning-data">Loading and cleaning data</a></li>
+  <li><a href="#summarize-debt-data-and-show-tables" id="toc-summarize-debt-data-and-show-tables" class="nav-link" data-scroll-target="#summarize-debt-data-and-show-tables">Summarize debt data and show tables</a></li>
+  <li><a href="#produce-tables-and-figures" id="toc-produce-tables-and-figures" class="nav-link" data-scroll-target="#produce-tables-and-figures">Produce Tables and figures</a>
+  <ul class="collapse">
+  <li><a href="#table-1-debt-service-as-a-percent-of-budget-acton-vs-ma-average-by-year" id="toc-table-1-debt-service-as-a-percent-of-budget-acton-vs-ma-average-by-year" class="nav-link" data-scroll-target="#table-1-debt-service-as-a-percent-of-budget-acton-vs-ma-average-by-year">Table 1 Debt Service as a Percent of Budget, Acton vs MA average, by year</a></li>
+  <li><a href="#table-2-debt-outstanding-divided-by-equalized-valuations-acton-vs-ma-average-by-year" id="toc-table-2-debt-outstanding-divided-by-equalized-valuations-acton-vs-ma-average-by-year" class="nav-link" data-scroll-target="#table-2-debt-outstanding-divided-by-equalized-valuations-acton-vs-ma-average-by-year">Table 2 Debt Outstanding divided by Equalized Valuations, Acton vs MA average, by year</a></li>
+  <li><a href="#figure-1-debt-service-as-a-percent-of-budget-acton-vs-ma-average-by-year" id="toc-figure-1-debt-service-as-a-percent-of-budget-acton-vs-ma-average-by-year" class="nav-link" data-scroll-target="#figure-1-debt-service-as-a-percent-of-budget-acton-vs-ma-average-by-year">Figure 1 Debt Service as a Percent of Budget, Acton vs MA average, by year</a></li>
+  <li><a href="#figure-2-debt-outstanding-divided-by-equalized-valuations-acton-vs-ma-average-by-year" id="toc-figure-2-debt-outstanding-divided-by-equalized-valuations-acton-vs-ma-average-by-year" class="nav-link" data-scroll-target="#figure-2-debt-outstanding-divided-by-equalized-valuations-acton-vs-ma-average-by-year">Figure 2 Debt Outstanding divided by Equalized Valuations, Acton vs MA average, by year</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -64,7 +152,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 5, 2024</p>
+      <p class="date">October 6, 2024</p>
     </div>
   </div>
   
@@ -102,23 +190,23 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="table-1-debt-service-as-a-percent-of-budget-acton-vs-ma-average-by-year">Table 1 Debt Service as a Percent of Budget, Acton vs MA average, by year</h3>
 <div class="cell">
 <div class="cell-output-display">
-<div id="msafyypykd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#msafyypykd table {
+<div id="ofoovhyxrm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ofoovhyxrm table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#msafyypykd thead, #msafyypykd tbody, #msafyypykd tfoot, #msafyypykd tr, #msafyypykd td, #msafyypykd th {
+#ofoovhyxrm thead, #ofoovhyxrm tbody, #ofoovhyxrm tfoot, #ofoovhyxrm tr, #ofoovhyxrm td, #ofoovhyxrm th {
   border-style: none;
 }
 
-#msafyypykd p {
+#ofoovhyxrm p {
   margin: 0;
   padding: 0;
 }
 
-#msafyypykd .gt_table {
+#ofoovhyxrm .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -144,12 +232,12 @@ ul.task-list li input[type="checkbox"] {
   border-left-color: #D3D3D3;
 }
 
-#msafyypykd .gt_caption {
+#ofoovhyxrm .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#msafyypykd .gt_title {
+#ofoovhyxrm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -161,7 +249,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-width: 0;
 }
 
-#msafyypykd .gt_subtitle {
+#ofoovhyxrm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -173,7 +261,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-width: 0;
 }
 
-#msafyypykd .gt_heading {
+#ofoovhyxrm .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -185,13 +273,13 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#msafyypykd .gt_bottom_border {
+#ofoovhyxrm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#msafyypykd .gt_col_headings {
+#ofoovhyxrm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -206,7 +294,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#msafyypykd .gt_col_heading {
+#ofoovhyxrm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -226,7 +314,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#msafyypykd .gt_column_spanner_outer {
+#ofoovhyxrm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -238,15 +326,15 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 4px;
 }
 
-#msafyypykd .gt_column_spanner_outer:first-child {
+#ofoovhyxrm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#msafyypykd .gt_column_spanner_outer:last-child {
+#ofoovhyxrm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#msafyypykd .gt_column_spanner {
+#ofoovhyxrm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -258,11 +346,11 @@ ul.task-list li input[type="checkbox"] {
   width: 100%;
 }
 
-#msafyypykd .gt_spanner_row {
+#ofoovhyxrm .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#msafyypykd .gt_group_heading {
+#ofoovhyxrm .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -288,7 +376,7 @@ ul.task-list li input[type="checkbox"] {
   text-align: left;
 }
 
-#msafyypykd .gt_empty_group_heading {
+#ofoovhyxrm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -303,15 +391,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 
-#msafyypykd .gt_from_md > :first-child {
+#ofoovhyxrm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#msafyypykd .gt_from_md > :last-child {
+#ofoovhyxrm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#msafyypykd .gt_row {
+#ofoovhyxrm .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -330,7 +418,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#msafyypykd .gt_stub {
+#ofoovhyxrm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -343,7 +431,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#msafyypykd .gt_stub_row_group {
+#ofoovhyxrm .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -357,15 +445,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: top;
 }
 
-#msafyypykd .gt_row_group_first td {
+#ofoovhyxrm .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#msafyypykd .gt_row_group_first th {
+#ofoovhyxrm .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#msafyypykd .gt_summary_row {
+#ofoovhyxrm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -375,16 +463,16 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#msafyypykd .gt_first_summary_row {
+#ofoovhyxrm .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#msafyypykd .gt_first_summary_row.thick {
+#ofoovhyxrm .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#msafyypykd .gt_last_summary_row {
+#ofoovhyxrm .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -394,7 +482,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#msafyypykd .gt_grand_summary_row {
+#ofoovhyxrm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -404,7 +492,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#msafyypykd .gt_first_grand_summary_row {
+#ofoovhyxrm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -414,7 +502,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-color: #D3D3D3;
 }
 
-#msafyypykd .gt_last_grand_summary_row_top {
+#ofoovhyxrm .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -424,11 +512,11 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#msafyypykd .gt_striped {
+#ofoovhyxrm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#msafyypykd .gt_table_body {
+#ofoovhyxrm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -437,7 +525,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#msafyypykd .gt_footnotes {
+#ofoovhyxrm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -451,7 +539,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#msafyypykd .gt_footnote {
+#ofoovhyxrm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -460,7 +548,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#msafyypykd .gt_sourcenotes {
+#ofoovhyxrm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -474,7 +562,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#msafyypykd .gt_sourcenote {
+#ofoovhyxrm .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -482,63 +570,63 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#msafyypykd .gt_left {
+#ofoovhyxrm .gt_left {
   text-align: left;
 }
 
-#msafyypykd .gt_center {
+#ofoovhyxrm .gt_center {
   text-align: center;
 }
 
-#msafyypykd .gt_right {
+#ofoovhyxrm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#msafyypykd .gt_font_normal {
+#ofoovhyxrm .gt_font_normal {
   font-weight: normal;
 }
 
-#msafyypykd .gt_font_bold {
+#ofoovhyxrm .gt_font_bold {
   font-weight: bold;
 }
 
-#msafyypykd .gt_font_italic {
+#ofoovhyxrm .gt_font_italic {
   font-style: italic;
 }
 
-#msafyypykd .gt_super {
+#ofoovhyxrm .gt_super {
   font-size: 65%;
 }
 
-#msafyypykd .gt_footnote_marks {
+#ofoovhyxrm .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#msafyypykd .gt_asterisk {
+#ofoovhyxrm .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#msafyypykd .gt_indent_1 {
+#ofoovhyxrm .gt_indent_1 {
   text-indent: 5px;
 }
 
-#msafyypykd .gt_indent_2 {
+#ofoovhyxrm .gt_indent_2 {
   text-indent: 10px;
 }
 
-#msafyypykd .gt_indent_3 {
+#ofoovhyxrm .gt_indent_3 {
   text-indent: 15px;
 }
 
-#msafyypykd .gt_indent_4 {
+#ofoovhyxrm .gt_indent_4 {
   text-indent: 20px;
 }
 
-#msafyypykd .gt_indent_5 {
+#ofoovhyxrm .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -731,23 +819,23 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="table-2-debt-outstanding-divided-by-equalized-valuations-acton-vs-ma-average-by-year">Table 2 Debt Outstanding divided by Equalized Valuations, Acton vs MA average, by year</h3>
 <div class="cell">
 <div class="cell-output-display">
-<div id="rcdidjbetc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#rcdidjbetc table {
+<div id="ohhlgirpds" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ohhlgirpds table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#rcdidjbetc thead, #rcdidjbetc tbody, #rcdidjbetc tfoot, #rcdidjbetc tr, #rcdidjbetc td, #rcdidjbetc th {
+#ohhlgirpds thead, #ohhlgirpds tbody, #ohhlgirpds tfoot, #ohhlgirpds tr, #ohhlgirpds td, #ohhlgirpds th {
   border-style: none;
 }
 
-#rcdidjbetc p {
+#ohhlgirpds p {
   margin: 0;
   padding: 0;
 }
 
-#rcdidjbetc .gt_table {
+#ohhlgirpds .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -773,12 +861,12 @@ ul.task-list li input[type="checkbox"] {
   border-left-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_caption {
+#ohhlgirpds .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#rcdidjbetc .gt_title {
+#ohhlgirpds .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -790,7 +878,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-width: 0;
 }
 
-#rcdidjbetc .gt_subtitle {
+#ohhlgirpds .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -802,7 +890,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-width: 0;
 }
 
-#rcdidjbetc .gt_heading {
+#ohhlgirpds .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -814,13 +902,13 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_bottom_border {
+#ohhlgirpds .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_col_headings {
+#ohhlgirpds .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -835,7 +923,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_col_heading {
+#ohhlgirpds .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -855,7 +943,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#rcdidjbetc .gt_column_spanner_outer {
+#ohhlgirpds .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -867,15 +955,15 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 4px;
 }
 
-#rcdidjbetc .gt_column_spanner_outer:first-child {
+#ohhlgirpds .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#rcdidjbetc .gt_column_spanner_outer:last-child {
+#ohhlgirpds .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#rcdidjbetc .gt_column_spanner {
+#ohhlgirpds .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -887,11 +975,11 @@ ul.task-list li input[type="checkbox"] {
   width: 100%;
 }
 
-#rcdidjbetc .gt_spanner_row {
+#ohhlgirpds .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#rcdidjbetc .gt_group_heading {
+#ohhlgirpds .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -917,7 +1005,7 @@ ul.task-list li input[type="checkbox"] {
   text-align: left;
 }
 
-#rcdidjbetc .gt_empty_group_heading {
+#ohhlgirpds .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -932,15 +1020,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 
-#rcdidjbetc .gt_from_md > :first-child {
+#ohhlgirpds .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#rcdidjbetc .gt_from_md > :last-child {
+#ohhlgirpds .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#rcdidjbetc .gt_row {
+#ohhlgirpds .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -959,7 +1047,7 @@ ul.task-list li input[type="checkbox"] {
   overflow-x: hidden;
 }
 
-#rcdidjbetc .gt_stub {
+#ohhlgirpds .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -972,7 +1060,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#rcdidjbetc .gt_stub_row_group {
+#ohhlgirpds .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -986,15 +1074,15 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: top;
 }
 
-#rcdidjbetc .gt_row_group_first td {
+#ohhlgirpds .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#rcdidjbetc .gt_row_group_first th {
+#ohhlgirpds .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#rcdidjbetc .gt_summary_row {
+#ohhlgirpds .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1004,16 +1092,16 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#rcdidjbetc .gt_first_summary_row {
+#ohhlgirpds .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_first_summary_row.thick {
+#ohhlgirpds .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#rcdidjbetc .gt_last_summary_row {
+#ohhlgirpds .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1023,7 +1111,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_grand_summary_row {
+#ohhlgirpds .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1033,7 +1121,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#rcdidjbetc .gt_first_grand_summary_row {
+#ohhlgirpds .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1043,7 +1131,7 @@ ul.task-list li input[type="checkbox"] {
   border-top-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_last_grand_summary_row_top {
+#ohhlgirpds .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1053,11 +1141,11 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_striped {
+#ohhlgirpds .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#rcdidjbetc .gt_table_body {
+#ohhlgirpds .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1066,7 +1154,7 @@ ul.task-list li input[type="checkbox"] {
   border-bottom-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_footnotes {
+#ohhlgirpds .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1080,7 +1168,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_footnote {
+#ohhlgirpds .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1089,7 +1177,7 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#rcdidjbetc .gt_sourcenotes {
+#ohhlgirpds .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1103,7 +1191,7 @@ ul.task-list li input[type="checkbox"] {
   border-right-color: #D3D3D3;
 }
 
-#rcdidjbetc .gt_sourcenote {
+#ohhlgirpds .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1111,63 +1199,63 @@ ul.task-list li input[type="checkbox"] {
   padding-right: 5px;
 }
 
-#rcdidjbetc .gt_left {
+#ohhlgirpds .gt_left {
   text-align: left;
 }
 
-#rcdidjbetc .gt_center {
+#ohhlgirpds .gt_center {
   text-align: center;
 }
 
-#rcdidjbetc .gt_right {
+#ohhlgirpds .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#rcdidjbetc .gt_font_normal {
+#ohhlgirpds .gt_font_normal {
   font-weight: normal;
 }
 
-#rcdidjbetc .gt_font_bold {
+#ohhlgirpds .gt_font_bold {
   font-weight: bold;
 }
 
-#rcdidjbetc .gt_font_italic {
+#ohhlgirpds .gt_font_italic {
   font-style: italic;
 }
 
-#rcdidjbetc .gt_super {
+#ohhlgirpds .gt_super {
   font-size: 65%;
 }
 
-#rcdidjbetc .gt_footnote_marks {
+#ohhlgirpds .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#rcdidjbetc .gt_asterisk {
+#ohhlgirpds .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#rcdidjbetc .gt_indent_1 {
+#ohhlgirpds .gt_indent_1 {
   text-indent: 5px;
 }
 
-#rcdidjbetc .gt_indent_2 {
+#ohhlgirpds .gt_indent_2 {
   text-indent: 10px;
 }
 
-#rcdidjbetc .gt_indent_3 {
+#ohhlgirpds .gt_indent_3 {
   text-indent: 15px;
 }
 
-#rcdidjbetc .gt_indent_4 {
+#ohhlgirpds .gt_indent_4 {
   text-indent: 20px;
 }
 
-#rcdidjbetc .gt_indent_5 {
+#ohhlgirpds .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1379,11 +1467,12 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+
+
 </section>
 </section>
 
-</main>
-<!-- /main column -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
