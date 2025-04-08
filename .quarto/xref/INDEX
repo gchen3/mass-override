@@ -1,0 +1,12 @@
+{
+  "debt_data_analysis.qmd": {
+    "debt_data_analysis.html": "84c5ee24"
+  },
+  "journal/journal.qmd": {
+    "journal.tex": "37e61ed6",
+    "journal.html": "0a384fdb"
+  },
+  "override_data_analysis.qmd": {
+    "override_data_analysis.html": "130c5999"
+  }
+}

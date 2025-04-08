@@ -13,6 +13,10 @@ author:
     affiliations:
       - name: University at Albany SUNY
         department: Department of Public Administration and Policy
+  - name: Huimin (Amy) Chen 2
+    affiliations:
+      - name: University of Massachusetts at Lowell
+        department: Department of Accounting
 abstract: |
   In this paper, we use tax override data in municipal governments in Massachusetts to examine the causes and costs.
 keywords:
@@ -26,6 +30,7 @@ bibliography: bibliography.bib
 
 
 
+![Consistency comparison in fitting surrogate model in the tidal power example.](fig1.pdf){#fig-first width=3in}
 
 | one  | two  | three | four | five |
 |------|------|-------|------|------|

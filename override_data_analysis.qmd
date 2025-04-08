@@ -96,13 +96,12 @@ saveRDS(override_all_clean, here::here("data", "override_all_clean.RData"))
   
 override_sum <-
   override_all_clean |> 
-  filter(fiscalyear>=2000) |>
   group_by(municipality, votetype) |> 
   summarize(average_yes_percent = mean(per_yes, na.rm = TRUE), 
             average_win = mean(winloss_code, na.rm = TRUE),
             count = n(), .groups = 'drop')
 
-override_sum_abtowns <- override_sum |> filter(municipality == "Acton" | municipality == "Boxborough")
+override_sum_abtowns <- override_sum |> filter(municipality == "Acton")
 
 override_sum_type <- override_sum |> 
   group_by(votetype) |> 
@@ -111,14 +110,13 @@ override_sum_type <- override_sum |>
             count = n())
 
 override_sum_year <- override_all_clean |> 
-  filter(fiscalyear>=2000) |>
   group_by(fiscalyear) |> 
   summarize(average_yes_percent = mean(per_yes, na.rm = TRUE), 
             average_win = mean(winloss_code, na.rm = TRUE),
             count = n(), .groups = 'drop')
 
 override_acton <- override_all_clean |> 
-  filter(municipality == "Acton", fiscalyear>=2000)  |>
+  filter(municipality == "Acton")  |>
   select(municipality, fiscalyear, winloss, per_yes, votetype, department, description)
 ```
 
@@ -131,15 +129,15 @@ override_acton <- override_all_clean |>
 override_sum_type |> 
   gt() |>
   tab_header(
-    title = md("**Overrides by type 2000-2024**")
+    title = md("**Overrides by type**")
   ) |>
   tab_source_note(
     source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
   ) |>
   cols_label(
     votetype = md("Type"),
-    average_yes_percent = md("% Yes"),
-    average_win = md("% Win"),
+    average_yes_percent = md("Percent Yes"),
+    average_win = md("Percent Win"),
     count = md("Overrides (n)")
   ) |>
   fmt_percent(
@@ -150,15 +148,15 @@ override_sum_type |>
 override_sum_year|> 
   gt() |>
   tab_header(
-    title = md("**Overrides by year 2000-2024**")
+    title = md("**Overrides by year **")
   ) |>
   tab_source_note(
     source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
   ) |>
   cols_label(
     fiscalyear = "Year",
-    average_yes_percent = md("% Yes"),
-    average_win = md("% Win"),
+    average_yes_percent = md("Percent Yes"),
+    average_win = md("Percent Win"),
     count = md("Overrides (n)")
   ) |>
   fmt_percent(
@@ -169,7 +167,7 @@ override_sum_year|>
 override_sum_abtowns |> 
   gt() |>
   tab_header(
-    title = md("**Acton and Boxborough Town Overrides 2000-2024**")
+    title = md("**Acton Town Overrides**")
   ) |>
   tab_source_note(
     source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
@@ -177,8 +175,8 @@ override_sum_abtowns |>
   cols_label(
     municipality = "Town",
     votetype = md("Type"),
-    average_yes_percent = md("% Yes"),
-    average_win = md("% Win"),
+    average_yes_percent = md("Percent Yes"),
+    average_win = md("Percent Win"),
     count = md("Overrides (n)")
   ) |>
   fmt_percent(
@@ -189,7 +187,7 @@ override_sum_abtowns |>
 override_acton |> 
   gt() |>
   tab_header(
-    title = md("**Acton Town Overrides 2000-2024**")
+    title = md("**Acton Town Overrides**")
   ) |>
   tab_source_note(
     source_note = "Source: Department of Local Services proposition 2 1/2 override votes."
@@ -198,7 +196,7 @@ override_acton |>
     municipality = "Town", 
     fiscalyear = "Year", 
     winloss = "Result", 
-    per_yes = "% Yes", 
+    per_yes = "Percent Yes", 
     votetype = "Type", 
     department = "Department", 
     description = "Description"
@@ -209,4 +207,141 @@ override_acton |>
   )
 
 
+```
+
+## Analyzing the impact of past overrides and fails 
+
+```{r impact_override}
+#| echo: false
+#| include: true
+#| message: false
+#| warning: false
+#| results: asis
+
+library(plm)
+library(stargazer)
+
+override_year <- override_all_clean %>%
+  select(-dorcode, -votedate, -department, -description) %>%
+  mutate (win_percent = yesvotes / (yesvotes + novotes))
+
+all_munis <- unique(override_year$municipality)
+all_years <- seq(min(override_year$fiscalyear), max(override_year$fiscalyear))
+
+override_panel <- expand_grid(
+  municipality = all_munis,
+  fiscalyear = all_years,
+)
+
+override_fullpanel <- override_panel %>%
+  left_join(override_year, by = c("municipality", "fiscalyear")) %>%
+  mutate(amount = as.numeric(as.character(amount))) %>%  # Convert amount to numeric
+  group_by(municipality, fiscalyear) %>%
+  summarise(
+    winloss    = mean(winloss_code, na.rm = TRUE),
+    yesvotes   = sum(yesvotes, na.rm = TRUE),
+    novotes    = sum(novotes, na.rm = TRUE),
+    win_percent = mean(win_percent, na.rm = TRUE),
+    amount     = sum(amount, na.rm = TRUE),
+    across(
+      .cols = c(taxoverride, capitalexclusion, debtexclusion, stableexclusion),
+      .fns  = ~ mean(.x, na.rm = TRUE)
+    ),
+    across(
+      c(taxoverride, capitalexclusion, debtexclusion, stableexclusion),
+      ~ replace_na(.x, 0)
+    ),
+    .groups = "drop"
+  )
+
+override_fullpanel <- pdata.frame(
+  override_fullpanel,
+  index = c("municipality", "fiscalyear")
+)
+
+override_fullpanel <- override_fullpanel %>%
+  mutate(
+    override = case_when(
+      !is.na(winloss) ~ 1,
+      TRUE ~ 0
+    ),
+    override_loss = case_when(
+      winloss == 0 ~ 1,
+      TRUE ~ 0
+    ),
+    override_win = case_when(
+      winloss == 1 ~ 1,
+      TRUE ~ 0
+    ),
+    override_mix = case_when(
+      winloss > 0 & winloss < 1 ~ 1,
+      TRUE ~ 0
+    ),
+    override_close = case_when(
+      win_percent >0.50 & win_percent < 0.55 ~ 1,
+      TRUE ~ 0
+    )
+  )
+
+controls <- c("taxoverride", "capitalexclusion", "debtexclusion", "stableexclusion", "amount")
+
+
+# Model 1-3: using a 1-period lag
+model1 <- plm(
+  winloss ~ lag(override, 1), 
+  data  = override_fullpanel,
+  model = "within"
+)
+
+
+model2 <- plm(
+  winloss ~ lag(override_loss, 1), 
+  data  = override_fullpanel,
+  model = "within"
+)
+
+model3 <- plm(
+  winloss ~ lag(override_close, 1), 
+  data  = override_fullpanel,
+  model = "within"
+)
+
+# Model 1-3: using a 1-period lag
+
+model4 <- plm(
+  win_percent ~ lag(override, 1), 
+  data  = override_fullpanel,
+  model = "within"
+)
+
+
+model5 <- plm(
+  win_percent ~ lag(override_loss, 1), 
+  data  = override_fullpanel,
+  model = "within"
+)
+
+model6 <- plm(
+  win_percent ~ lag(override_close, 1), 
+  data  = override_fullpanel,
+  model = "within"
+)
+
+stargazer(
+  model1,
+  model2,
+  model3,
+  model4,
+  model5,
+  model6,
+  column.labels = c("Model 1", "Model 2", "Model 3", "Model 4"),
+  covariate.labels = c(
+    "Having Override Year Before",
+    "Loss Override Year Before",
+    "Close (50~55%) Override Year Before"
+  ),
+  dep.var.labels = c("Probability of Getting Approval", "Percent of YES Votes"),
+  type = "html",
+  omit.stat = c("adj.rsq", "f")
+)
 ```
